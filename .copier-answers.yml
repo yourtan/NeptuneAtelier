@@ -1,0 +1,18 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.6.5
+_src_path: https://github.com/jupyterlab/extension-template
+advanced: false
+author_email: lazt0101@hotmail.com
+author_name: my_extension
+create_claude_symlink: true
+create_gemini_symlink: false
+has_ai_rules: true
+has_binder: false
+has_settings: false
+kind: frontend
+labextension_name: myextension
+project_short_description: A JupyterLab extension.
+python_name: myextension
+repository: https://github.com/yourtan/NeptuneAtelier
+test: true
+
