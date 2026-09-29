@@ -108,7 +108,7 @@ npx tsc --noEmit               # Check all files
 After editing Python files:
 
 ```bash
-python -m py_compile myextension/__init__.py  # Check single file for syntax errors
+python -m py_compile neptuneatelier/__init__.py  # Check single file for syntax errors
 ```
 
 ## Coding Standards
@@ -157,7 +157,7 @@ function activate(app: JupyterFrontEnd): void {}
 **✅ Do**: Define plugin ID in `src/index.ts`:
 
 ```typescript
-const PLUGIN_ID = 'myextension:plugin';
+const PLUGIN_ID = 'neptuneatelier:plugin';
 ```
 
 **✅ Do**: For extensions with multiple commands, create a `src/commands.ts` module to centralize command definitions:
@@ -169,8 +169,8 @@ import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 
 // Command IDs
 export namespace CommandIDs {
-  export const openPanel = 'myextension:open-panel';
-  export const refreshData = 'myextension:refresh-data';
+  export const openPanel = 'neptuneatelier:open-panel';
+  export const refreshData = 'neptuneatelier:refresh-data';
 }
 
 // Command argument types
@@ -220,7 +220,7 @@ import {
 import { registerCommands, CommandIDs, CommandArguments } from './commands';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'myextension:plugin',
+  id: 'neptuneatelier:plugin',
   autoStart: true,
   activate: (app: JupyterFrontEnd) => {
     // Register all commands with JupyterLab's command registry
@@ -342,7 +342,7 @@ Many issues arise from confusing these two steps:
 #### `jlpm build` — Compiles the Extension. Do this every time you change TypeScript code.
 
 - **What it does**: Compiles TypeScript → JavaScript, bundles the extension
-- **Output**: Creates files in `lib/` and `myextension/labextension/`
+- **Output**: Creates files in `lib/` and `neptuneatelier/labextension/`
 - **What it does NOT do**: Register the extension with JupyterLab
 
 #### `pip install -e .` + `jupyter-builder develop .` — Registers the Extension. Do this once as a setup step.
@@ -434,14 +434,14 @@ jupyter-builder develop . --overwrite
 **4. Ask user to check the browser console** (F12 or Cmd+Option+I):
 
 - Request user to look for JavaScript errors that might prevent extension activation
-- Ask user to search for the extension ID (`myextension`) to see if it loaded
+- Ask user to search for the extension ID (`neptuneatelier`) to see if it loaded
 - Ask user to report any error messages or warnings
 
 **5. Verify the build output:**
 
 ```bash
 ls -la lib/                          # Should contain compiled .js files
-ls -la myextension/labextension/  # Should contain bundled extension
+ls -la neptuneatelier/labextension/  # Should contain bundled extension
 ```
 
 **6. If still not working**, try a clean rebuild following the reset instructions below
@@ -550,7 +550,7 @@ try {
 **✅ Do**: Namespace all CSS in `style/index.css`
 
 ```css
-.jp-myextension-widget {
+.jp-neptuneatelier-widget {
   padding: 8px;
 }
 ```
@@ -576,11 +576,11 @@ dispose(): void {
 
 Use these patterns consistently throughout your code:
 
-- **Plugin ID** (in `src/index.ts`): `'myextension:plugin'`
-- **Command IDs** (in `src/commands.ts` or `src/index.ts`): `'myextension:command-name'`
+- **Plugin ID** (in `src/index.ts`): `'neptuneatelier:plugin'`
+- **Command IDs** (in `src/commands.ts` or `src/index.ts`): `'neptuneatelier:command-name'`
   - For multiple commands, create `src/commands.ts` with a centralized `COMMANDS` mapping
   - For 1-2 commands, define directly in `src/index.ts`
-- **CSS classes** (in `style/index.css`): `.jp-myextension-ClassName`
+- **CSS classes** (in `style/index.css`): `.jp-neptuneatelier-ClassName`
 
 ### Essential Commands
 

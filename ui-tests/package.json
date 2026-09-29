@@ -1,7 +1,7 @@
 {
-  "name": "myextension-ui-tests",
+  "name": "neptuneatelier-ui-tests",
   "version": "1.0.0",
-  "description": "JupyterLab myextension Integration Tests",
+  "description": "JupyterLab neptuneatelier Integration Tests",
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",

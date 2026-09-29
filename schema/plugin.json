@@ -1,0 +1,280 @@
+{
+  "title": "Theme Studio",
+  "description": "Colors, backgrounds, effects, style, layout, and editor settings. Edit these with the Theme Studio panel (command palette: Open Theme Studio).",
+  "jupyter.lab.shortcuts": [
+    {
+      "command": "neptuneatelier:safe-mode",
+      "keys": ["Accel Alt Shift R"],
+      "selector": "body"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "qol": {
+      "type": "object",
+      "title": "Editor",
+      "description": "Editor behavior, mirrored into JupyterLab's CodeMirror settings.",
+      "properties": {
+        "autoClosingBrackets": {
+          "type": "boolean"
+        },
+        "matchBrackets": {
+          "type": "boolean"
+        },
+        "codeFolding": {
+          "type": "boolean"
+        },
+        "highlightActiveLine": {
+          "type": "boolean"
+        },
+        "lineNumbers": {
+          "type": "boolean"
+        },
+        "lineWrap": {
+          "type": "boolean"
+        },
+        "highlightWhitespace": {
+          "type": "boolean"
+        },
+        "highlightTrailingWhitespace": {
+          "type": "boolean"
+        },
+        "indentUnit": {
+          "type": "string"
+        },
+        "cursorBlinkRate": {
+          "type": "number"
+        }
+      },
+      "default": {
+        "autoClosingBrackets": true,
+        "matchBrackets": true,
+        "codeFolding": false,
+        "highlightActiveLine": false,
+        "lineNumbers": true,
+        "lineWrap": true,
+        "highlightWhitespace": false,
+        "highlightTrailingWhitespace": false,
+        "indentUnit": "4",
+        "cursorBlinkRate": 1200
+      }
+    },
+    "colors": {
+      "type": "object",
+      "title": "Color overrides",
+      "description": "Maps JupyterLab CSS variables (e.g. --jp-brand-color1) to colors. Anything not listed uses the active theme's color.",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "background": {
+      "type": "object",
+      "title": "Background",
+      "description": "The base background behind JupyterLab: color, gradient, or image. Animated effects are separate layers (see \"effects\").",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "gradient": {
+          "description": "Structured gradient: kind, angle, stops, animation, speed, scrollSize."
+        },
+        "imageRef": {
+          "type": "string",
+          "description": "Reference to an image stored in the browser; never the image data itself."
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "blur": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "chromeOpacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "contentOpacity": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1
+        },
+        "imageFit": {
+          "type": "string",
+          "enum": ["cover", "contain", "stretch", "tile"],
+          "description": "How a background image fills its area."
+        },
+        "imagePositionX": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "imagePositionY": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "imageZoom": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 3
+        },
+        "noise": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "vignette": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "default": {
+        "type": "none",
+        "color": "#1e1e1e",
+        "gradient": {
+          "kind": "linear",
+          "angle": 135,
+          "stops": [
+            {
+              "color": "#1e1e2f",
+              "position": 0
+            },
+            {
+              "color": "#3a1c71",
+              "position": 50
+            },
+            {
+              "color": "#d76d77",
+              "position": 100
+            }
+          ],
+          "animation": "none",
+          "speed": 1,
+          "scrollSize": 1200
+        },
+        "imageRef": "",
+        "opacity": 1,
+        "blur": 0,
+        "chromeOpacity": 0.3,
+        "contentOpacity": 1,
+        "imageFit": "cover",
+        "imagePositionX": 50,
+        "imagePositionY": 50,
+        "imageZoom": 1,
+        "noise": 0,
+        "vignette": 0
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "title": "Style",
+      "description": "Shape, glass, fonts, cursor, and motion.",
+      "default": {
+        "baseTheme": "auto",
+        "radius": 2,
+        "borderWidth": 1,
+        "floatingPanels": false,
+        "panelGap": 8,
+        "shadow": 1,
+        "glass": false,
+        "glassBlur": 12,
+        "glow": false,
+        "glowIntensity": 0.6,
+        "uiFont": "",
+        "codeFont": "",
+        "uiFontSize": 0,
+        "codeFontSize": 0,
+        "codeLineHeight": 0,
+        "ligatures": true,
+        "cursorStyle": "line",
+        "animations": false,
+        "borderStyle": "solid",
+        "shadowColor": "#000000",
+        "acrylicNoise": false,
+        "gradientHeadings": false,
+        "cursorTrail": false
+      }
+    },
+    "layout": {
+      "type": "object",
+      "title": "Layout",
+      "description": "Chrome visibility, density, tabs, notebook cells, and scrollbars.",
+      "default": {
+        "hideHeader": false,
+        "hideStatusBar": false,
+        "hideLeftActivityBar": false,
+        "hideRightActivityBar": false,
+        "density": "normal",
+        "tabStyle": "default",
+        "hidePrompts": false,
+        "notebookMaxWidth": 0,
+        "cellStyle": "default",
+        "scrollbarStyle": "default",
+        "scrollbarColor": ""
+      }
+    },
+    "effects": {
+      "type": "array",
+      "title": "Effect layers",
+      "description": "Animated particle and shader layers, on the background or inside windows.",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "events": {
+      "type": "array",
+      "title": "Event rules",
+      "description": "Animations and effect changes triggered by what you do (cell runs, saves, typing…).",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "customCss": {
+      "type": "string",
+      "title": "Custom CSS",
+      "description": "Raw CSS applied after all other styles.",
+      "default": ""
+    },
+    "presets": {
+      "type": "array",
+      "title": "Saved presets",
+      "description": "Named snapshots of the full theme configuration.",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    },
+    "branding": {
+      "type": "object",
+      "title": "Branding",
+      "description": "Favicon, loading splash screen, and kernel-busy favicon animation.",
+      "default": {
+        "faviconRef": "",
+        "animatedFavicon": false,
+        "splashEnabled": false,
+        "splashText": "Loading…",
+        "splashColor": "#0b1026"
+      }
+    },
+    "particlePresets": {
+      "type": "array",
+      "title": "Saved particle presets",
+      "description": "Named particle configurations saved from the Particle Lab tab, reusable from any Particles effect layer.",
+      "items": {
+        "type": "object"
+      },
+      "default": []
+    }
+  }
+}

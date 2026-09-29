@@ -3,3 +3,1277 @@
 
     https://jupyterlab.readthedocs.io/en/stable/developer/css.html
 */
+
+/* ------------------------------------------------------------------ */
+
+/* Loading splash screen                                               */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-Splash {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 400ms ease;
+}
+
+.jp-neptuneatelier-Splash.jp-neptuneatelier-mod-fadeout {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.jp-neptuneatelier-SplashText {
+  color: #fff;
+  font-family: var(--jp-ui-font-family, sans-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Background layer                                                    */
+
+/* ------------------------------------------------------------------ */
+
+@property --jp-neptuneatelier-gradient-spin {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.jp-neptuneatelier-BackgroundLayer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+
+/* Oversized by twice the blur radius (set inline) so blurred edges fall
+   outside the viewport instead of fading to white. */
+.jp-neptuneatelier-BackgroundPaint {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.jp-neptuneatelier-EffectCanvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Grain overlay. Opacity (0 by default) is set inline from the "noise"
+   setting; the tile itself is a small random-pixel PNG generated once. */
+.jp-neptuneatelier-BackgroundNoise {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  mix-blend-mode: overlay;
+  opacity: 0;
+}
+
+/* Darkened-edges overlay. Opacity (0 by default) is set inline from the
+   "vignette" setting. */
+.jp-neptuneatelier-BackgroundVignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    rgb(0 0 0 / 80%) 130%
+  );
+  opacity: 0;
+}
+
+@property --jp-neptuneatelier-gradient-phase {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-spin {
+  animation: jp-neptuneatelier-spin
+    var(--jp-neptuneatelier-gradient-duration, 30s) linear infinite;
+}
+
+.jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-drift {
+  background-size: 200% 200%;
+  animation: jp-neptuneatelier-drift
+    var(--jp-neptuneatelier-gradient-duration, 30s) ease-in-out infinite
+    alternate;
+}
+
+/* One cycle slides the repeating gradient by exactly one repeat. */
+.jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-scroll {
+  background-size: auto;
+  animation: jp-neptuneatelier-scroll
+    var(--jp-neptuneatelier-gradient-duration, 30s) linear infinite;
+}
+
+@keyframes jp-neptuneatelier-spin {
+  to {
+    --jp-neptuneatelier-gradient-spin: 360deg;
+  }
+}
+
+@keyframes jp-neptuneatelier-drift {
+  from {
+    background-position: 0% 0%;
+  }
+
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes jp-neptuneatelier-scroll {
+  to {
+    --jp-neptuneatelier-gradient-phase: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-spin,
+  .jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-drift,
+  .jp-neptuneatelier-BackgroundPaint.jp-neptuneatelier-mod-scroll {
+    animation: none;
+  }
+}
+
+/* One effect layer (particles or shader). Blend mode and opacity are set
+   inline. Never intercepts the mouse. */
+.jp-neptuneatelier-EffectLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Inside a window, "behind the content": first child, under the window's
+   own (absolutely positioned) contents. */
+.jp-neptuneatelier-EffectLayer.jp-neptuneatelier-mod-behind {
+  z-index: 0;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Floating panels                                                     */
+
+/* ------------------------------------------------------------------ */
+
+/* The gaps themselves are real layout spacing set by FloatingLayout (JS),
+   so panels are genuinely resized and keep their inner padding. These
+   rules only round and lift each panel into a card. */
+.jp-neptuneatelier-floating .jp-SideBar.lm-TabBar,
+.jp-neptuneatelier-floating #jp-left-stack,
+.jp-neptuneatelier-floating #jp-right-stack,
+.jp-neptuneatelier-floating #jp-top-panel,
+.jp-neptuneatelier-floating #jp-bottom-panel,
+.jp-neptuneatelier-floating .lm-DockPanel-widget {
+  overflow: hidden;
+  border-radius: var(--jp-neptuneatelier-radius);
+  box-shadow: 0 4px 18px
+    rgb(
+      var(--jp-neptuneatelier-shadow-rgb, 0 0 0) /
+        var(--jp-neptuneatelier-shadow-alpha)
+    );
+}
+
+/* A dock tab bar and its content read as one card. */
+.jp-neptuneatelier-floating .lm-DockPanel-tabBar {
+  border-radius: var(--jp-neptuneatelier-radius) var(--jp-neptuneatelier-radius)
+    0 0;
+}
+
+.jp-neptuneatelier-floating .lm-DockPanel-widget {
+  border-radius: 0 0 var(--jp-neptuneatelier-radius)
+    var(--jp-neptuneatelier-radius);
+}
+
+.jp-neptuneatelier-floating .lm-SplitPanel-handle,
+.jp-neptuneatelier-floating .lm-DockPanel-handle {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Glass                                                               */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-glass #jp-top-panel,
+.jp-neptuneatelier-glass #jp-bottom-panel,
+.jp-neptuneatelier-glass .jp-SideBar.lm-TabBar,
+.jp-neptuneatelier-glass #jp-left-stack > .lm-Widget,
+.jp-neptuneatelier-glass #jp-right-stack > .lm-Widget,
+.jp-neptuneatelier-glass .lm-DockPanel-tabBar {
+  backdrop-filter: blur(var(--jp-neptuneatelier-glass-blur)) saturate(1.3);
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Glow                                                                */
+
+/* ------------------------------------------------------------------ */
+
+/* An ambient accent glow, always on (not a one-shot event). Uses `filter:
+   drop-shadow` rather than `box-shadow` so it layers cleanly over whatever
+   box-shadow a cell style or floating panel already sets. */
+
+.jp-neptuneatelier-glow .jp-Notebook .jp-Cell.jp-mod-active {
+  filter: drop-shadow(
+    0 0 calc(3px + 9px * var(--jp-neptuneatelier-glow-alpha, 0.6))
+      var(--jp-brand-color1)
+  );
+}
+
+.jp-neptuneatelier-glow .jp-Toolbar button.jp-mod-styled.jp-mod-accept {
+  filter: drop-shadow(
+    0 0 calc(2px + 6px * var(--jp-neptuneatelier-glow-alpha, 0.6))
+      var(--jp-brand-color1)
+  );
+}
+
+.jp-neptuneatelier-glow .lm-TabBar-tab.lm-mod-current {
+  filter: drop-shadow(
+    0 0 calc(2px + 6px * var(--jp-neptuneatelier-glow-alpha, 0.6))
+      var(--jp-brand-color1)
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Animated gradient headings                                          */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h1,
+.jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h2,
+.jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h3 {
+  background: linear-gradient(
+    90deg,
+    var(--jp-brand-color0),
+    var(--jp-brand-color1),
+    var(--jp-accent-color1),
+    var(--jp-brand-color0)
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: jp-neptuneatelier-gradient-text-shift 6s linear infinite;
+}
+
+@keyframes jp-neptuneatelier-gradient-text-shift {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h1,
+  .jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h2,
+  .jp-neptuneatelier-gradient-headings .jp-RenderedHTMLCommon h3 {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Header                                                              */
+
+/* ------------------------------------------------------------------ */
+
+/* Lumino reads min/max height when laying out the shell, so a zero max
+   height reclaims the space (a plain display:none would leave a gap). */
+.jp-neptuneatelier-hide-header #jp-top-panel,
+.jp-neptuneatelier-hide-header #jp-menu-panel {
+  min-height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden;
+  border: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Acrylic (noise texture over glass surfaces)                         */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-top-panel,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-bottom-panel,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic .jp-SideBar.lm-TabBar,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-left-stack > .lm-Widget,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-right-stack > .lm-Widget,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic .lm-DockPanel-tabBar {
+  position: relative;
+}
+
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-top-panel::after,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic #jp-bottom-panel::after,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic .jp-SideBar.lm-TabBar::after,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic
+  #jp-left-stack
+  > .lm-Widget::after,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic
+  #jp-right-stack
+  > .lm-Widget::after,
+.jp-neptuneatelier-glass.jp-neptuneatelier-acrylic .lm-DockPanel-tabBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--jp-neptuneatelier-noise-url);
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Tabs                                                                */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-tabs-pill .lm-DockPanel-tabBar .lm-TabBar-tab,
+.jp-neptuneatelier-tabs-underline .lm-DockPanel-tabBar .lm-TabBar-tab,
+.jp-neptuneatelier-tabs-minimal .lm-DockPanel-tabBar .lm-TabBar-tab {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.jp-neptuneatelier-tabs-minimal .lm-DockPanel-tabBar .lm-TabBar-tab {
+  color: var(--jp-ui-font-color2);
+}
+
+.jp-neptuneatelier-tabs-pill .lm-DockPanel-tabBar .lm-TabBar-tab::before,
+.jp-neptuneatelier-tabs-underline .lm-DockPanel-tabBar .lm-TabBar-tab::before,
+.jp-neptuneatelier-tabs-minimal .lm-DockPanel-tabBar .lm-TabBar-tab::before {
+  display: none;
+}
+
+.jp-neptuneatelier-tabs-pill .lm-DockPanel-tabBar .lm-TabBar-tab {
+  margin: 3px 2px;
+  border-radius: 999px;
+  min-height: calc(var(--jp-private-horizontal-tab-height, 24px) - 6px);
+  max-height: calc(var(--jp-private-horizontal-tab-height, 24px) - 6px);
+  line-height: calc(var(--jp-private-horizontal-tab-height, 24px) - 6px);
+}
+
+.jp-neptuneatelier-tabs-pill .lm-DockPanel-tabBar .lm-TabBar-tab:hover {
+  background: color-mix(in srgb, var(--jp-brand-color1) 12%, transparent);
+}
+
+.jp-neptuneatelier-tabs-pill
+  .lm-DockPanel-tabBar
+  .lm-TabBar-tab.lm-mod-current {
+  background: color-mix(in srgb, var(--jp-brand-color1) 25%, transparent);
+  color: var(--jp-ui-font-color0);
+}
+
+.jp-neptuneatelier-tabs-underline
+  .lm-DockPanel-tabBar
+  .lm-TabBar-tab.lm-mod-current {
+  box-shadow: inset 0 -2px 0 var(--jp-brand-color1);
+  color: var(--jp-ui-font-color0);
+}
+
+.jp-neptuneatelier-tabs-minimal
+  .lm-DockPanel-tabBar
+  .lm-TabBar-tab.lm-mod-current {
+  color: var(--jp-ui-font-color0);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Notebooks and cells                                                 */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-hide-prompts .jp-InputPrompt,
+.jp-neptuneatelier-hide-prompts .jp-OutputPrompt {
+  display: none;
+}
+
+.jp-neptuneatelier-notebook-limited .jp-Notebook .jp-WindowedPanel-viewport {
+  max-width: var(--jp-neptuneatelier-notebook-width);
+  margin-inline: auto;
+}
+
+.jp-neptuneatelier-cells-card .jp-Notebook .jp-Cell {
+  margin: 6px 0;
+  border-radius: var(--jp-neptuneatelier-radius);
+  background: var(--jp-layout-color1);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 15%);
+}
+
+.jp-neptuneatelier-cells-card .jp-Notebook .jp-Cell.jp-mod-active {
+  box-shadow:
+    0 0 0 1px var(--jp-brand-color1),
+    0 2px 8px rgb(0 0 0 / 20%);
+}
+
+.jp-neptuneatelier-cells-borderless {
+  --jp-cell-editor-border-color: transparent;
+  --jp-cell-editor-active-border-color: transparent;
+}
+
+.jp-neptuneatelier-cells-accent .jp-Notebook .jp-Cell.jp-mod-active {
+  box-shadow: inset 3px 0 0 var(--jp-brand-color1);
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Density                                                             */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-density-compact {
+  --jp-cell-padding: 2px;
+  --jp-code-padding: 2px;
+  --jp-notebook-padding: 4px;
+}
+
+.jp-neptuneatelier-density-compact .jp-DirListing-item {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.jp-neptuneatelier-density-comfortable {
+  --jp-cell-padding: 9px;
+  --jp-code-padding: 8px;
+  --jp-notebook-padding: 16px;
+}
+
+.jp-neptuneatelier-density-comfortable .jp-DirListing-item {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Editor                                                              */
+
+/* ------------------------------------------------------------------ */
+
+/* Extra specificity: CodeMirror injects its own theme rules at runtime,
+   after this stylesheet, so equal specificity would lose. */
+body.jp-neptuneatelier-cursor-thick .cm-editor .cm-cursor {
+  border-left-width: 3px;
+}
+
+body.jp-neptuneatelier-cursor-block .cm-editor .cm-cursor {
+  width: 0.6em;
+  border-left: none;
+  background: var(--jp-editor-cursor-color);
+  opacity: 0.55;
+}
+
+body.jp-neptuneatelier-ligatures-off .cm-editor .cm-content {
+  font-variant-ligatures: none;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Scrollbars                                                          */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-scrollbar-thin,
+.jp-neptuneatelier-scrollbar-thin * {
+  scrollbar-width: thin;
+}
+
+.jp-neptuneatelier-scrollbar-hidden,
+.jp-neptuneatelier-scrollbar-hidden * {
+  scrollbar-width: none;
+}
+
+.jp-neptuneatelier-scrollbar-colored,
+.jp-neptuneatelier-scrollbar-colored * {
+  scrollbar-color: var(--jp-neptuneatelier-scrollbar-color) transparent;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Motion                                                              */
+
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .jp-neptuneatelier-animations .lm-TabBar-tab,
+  .jp-neptuneatelier-animations .jp-DirListing-item,
+  .jp-neptuneatelier-animations .jp-ToolbarButtonComponent,
+  .jp-neptuneatelier-animations .lm-Menu-item,
+  .jp-neptuneatelier-animations .jp-Cell {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .jp-neptuneatelier-animations .jp-OutputArea-child {
+    animation: jp-neptuneatelier-fade-in 250ms ease-out;
+  }
+}
+
+@keyframes jp-neptuneatelier-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Theme Studio panel                                                  */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-ThemeStudioPanel {
+  overflow: hidden;
+  background: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+}
+
+.jp-neptuneatelier-ThemeStudio {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-size: var(--jp-ui-font-size1);
+}
+
+.jp-neptuneatelier-StudioHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--jp-border-color2);
+}
+
+.jp-neptuneatelier-Spacer {
+  flex: 1 1 auto;
+}
+
+.jp-neptuneatelier-TabBar {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--jp-border-color2);
+}
+
+.jp-neptuneatelier-TabButton {
+  flex: 1 1 auto;
+  padding: 7px 6px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--jp-ui-font-color2);
+  cursor: pointer;
+  font-size: var(--jp-ui-font-size1);
+}
+
+.jp-neptuneatelier-TabButton:hover {
+  color: var(--jp-ui-font-color0);
+  background: var(--jp-layout-color2);
+}
+
+.jp-neptuneatelier-TabButton.jp-mod-active {
+  color: var(--jp-ui-font-color0);
+  border-bottom-color: var(--jp-brand-color1);
+  font-weight: 600;
+}
+
+.jp-neptuneatelier-ModifiedDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--jp-brand-color1);
+  vertical-align: middle;
+}
+
+.jp-neptuneatelier-TabContent {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 10px 12px 24px;
+}
+
+.jp-neptuneatelier-Tab {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.jp-neptuneatelier-Section {
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 6px;
+  background: var(--jp-layout-color0);
+}
+
+.jp-neptuneatelier-SectionTitle {
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--jp-ui-font-color0);
+  user-select: none;
+}
+
+.jp-neptuneatelier-SectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 10px 10px;
+}
+
+.jp-neptuneatelier-Row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.jp-neptuneatelier-RowMain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jp-neptuneatelier-RowControl {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  max-width: 65%;
+}
+
+.jp-neptuneatelier-ToggleRow {
+  flex-direction: row;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.jp-neptuneatelier-ToggleText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jp-neptuneatelier-FieldLabel {
+  color: var(--jp-ui-font-color1);
+  font-size: var(--jp-ui-font-size1);
+}
+
+.jp-neptuneatelier-RowMain > .jp-neptuneatelier-FieldLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.jp-neptuneatelier-FieldDescription {
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+  line-height: 1.4;
+}
+
+.jp-neptuneatelier-Checkbox {
+  flex-shrink: 0;
+  margin: 2px 8px 0 0;
+}
+
+.jp-neptuneatelier-ColorInput {
+  width: 36px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.jp-neptuneatelier-ColorInputGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.jp-neptuneatelier-EyedropperButton {
+  padding: 2px 6px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  background: var(--jp-layout-color2);
+  color: var(--jp-ui-font-color1);
+  cursor: pointer;
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-EyedropperButton:hover {
+  background: var(--jp-layout-color3);
+}
+
+.jp-neptuneatelier-ColorWrap.jp-neptuneatelier-mod-inherited {
+  opacity: 0.55;
+}
+
+.jp-neptuneatelier-Badge {
+  padding: 0 5px;
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 8px;
+  color: var(--jp-ui-font-color3);
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-TextInput,
+.jp-neptuneatelier-Select {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  background: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+  font-size: var(--jp-ui-font-size1);
+}
+
+.jp-neptuneatelier-CodeText {
+  font-family: var(--jp-code-font-family);
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-Slider {
+  flex: 1 1 auto;
+  min-width: 0;
+  accent-color: var(--jp-brand-color1);
+}
+
+.jp-neptuneatelier-RowControl .jp-neptuneatelier-Slider {
+  width: 130px;
+}
+
+.jp-neptuneatelier-Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  background: var(--jp-layout-color2);
+  color: var(--jp-ui-font-color1);
+  cursor: pointer;
+  font-size: var(--jp-ui-font-size1);
+  white-space: nowrap;
+}
+
+.jp-neptuneatelier-border-dashed .jp-Notebook .jp-Cell,
+.jp-neptuneatelier-border-dashed .jp-Toolbar,
+.jp-neptuneatelier-border-dashed .jp-neptuneatelier-Button {
+  border-style: dashed !important;
+}
+
+.jp-neptuneatelier-border-dotted .jp-Notebook .jp-Cell,
+.jp-neptuneatelier-border-dotted .jp-Toolbar,
+.jp-neptuneatelier-border-dotted .jp-neptuneatelier-Button {
+  border-style: dotted !important;
+}
+
+.jp-neptuneatelier-border-double .jp-Notebook .jp-Cell,
+.jp-neptuneatelier-border-double .jp-Toolbar,
+.jp-neptuneatelier-border-double .jp-neptuneatelier-Button {
+  border-style: double !important;
+  border-width: 3px !important;
+}
+
+.jp-neptuneatelier-Button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.jp-neptuneatelier-Button:hover:not(:disabled) {
+  background: var(--jp-layout-color3);
+}
+
+.jp-neptuneatelier-Button.jp-mod-accept {
+  border-color: var(--jp-brand-color1);
+  background: var(--jp-brand-color1);
+  color: var(--jp-ui-inverse-font-color0);
+}
+
+.jp-neptuneatelier-glow .jp-neptuneatelier-Button.jp-mod-accept {
+  filter: drop-shadow(
+    0 0 calc(2px + 6px * var(--jp-neptuneatelier-glow-alpha, 0.6))
+      var(--jp-brand-color1)
+  );
+}
+
+.jp-neptuneatelier-Button.jp-mod-accept:hover:not(:disabled) {
+  background: var(--jp-brand-color0);
+}
+
+.jp-neptuneatelier-LinkButton {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--jp-content-link-color, var(--jp-brand-color1));
+  cursor: pointer;
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-LinkButton:disabled {
+  color: var(--jp-ui-font-color3);
+  cursor: default;
+}
+
+.jp-neptuneatelier-ButtonRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.jp-neptuneatelier-HiddenInput {
+  display: none;
+}
+
+.jp-neptuneatelier-Warning {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--jp-warn-color1);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--jp-warn-color1) 12%, transparent);
+}
+
+.jp-neptuneatelier-WarningItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-AuditList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jp-neptuneatelier-AuditItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--jp-ui-font-size0);
+}
+
+.jp-neptuneatelier-AuditBadge {
+  flex-shrink: 0;
+  width: 40px;
+  padding: 1px 0;
+  border-radius: 3px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.jp-neptuneatelier-AuditBadge.jp-neptuneatelier-mod-pass {
+  background: color-mix(in srgb, var(--jp-success-color1) 20%, transparent);
+  color: var(--jp-success-color1);
+}
+
+.jp-neptuneatelier-AuditBadge.jp-neptuneatelier-mod-fail {
+  background: color-mix(in srgb, var(--jp-error-color1) 20%, transparent);
+  color: var(--jp-error-color1);
+}
+
+.jp-neptuneatelier-AuditLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jp-neptuneatelier-AuditRatio {
+  flex-shrink: 0;
+  color: var(--jp-ui-font-color2);
+}
+
+.jp-neptuneatelier-CssEditor {
+  min-height: 320px;
+  padding: 8px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  background: var(--jp-layout-color0);
+  color: var(--jp-content-font-color1);
+  font-family: var(--jp-code-font-family);
+  font-size: var(--jp-code-font-size);
+  resize: vertical;
+  tab-size: 2;
+}
+
+/* Gradient editor */
+
+.jp-neptuneatelier-GradientEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.jp-neptuneatelier-PresetSwatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: 6px;
+}
+
+.jp-neptuneatelier-Swatch {
+  height: 24px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.jp-neptuneatelier-Swatch:hover {
+  outline: 2px solid var(--jp-brand-color1);
+}
+
+.jp-neptuneatelier-GradientPreview {
+  height: 64px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 6px;
+}
+
+.jp-neptuneatelier-StopBar {
+  position: relative;
+  height: 20px;
+  margin: 4px 8px 6px;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: 4px;
+  cursor: copy;
+}
+
+.jp-neptuneatelier-StopHandle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 26px;
+  border: 2px solid var(--jp-layout-color0);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--jp-border-color0);
+  transform: translate(-50%, -50%);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.jp-neptuneatelier-StopHandle.jp-mod-selected {
+  box-shadow:
+    0 0 0 1px var(--jp-border-color0),
+    0 0 0 3px var(--jp-brand-color1);
+}
+
+.jp-neptuneatelier-StopHandle:focus-visible {
+  outline: 2px solid var(--jp-brand-color1);
+  outline-offset: 2px;
+}
+
+.jp-neptuneatelier-AngleDial {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--jp-border-color1);
+  border-radius: 50%;
+  background: var(--jp-layout-color0);
+  cursor: grab;
+  touch-action: none;
+}
+
+.jp-neptuneatelier-AngleNeedle {
+  position: absolute;
+  top: 3px;
+  left: calc(50% - 1.5px);
+  width: 3px;
+  height: calc(50% - 3px);
+  border-radius: 2px;
+  background: var(--jp-brand-color1);
+  transform-origin: 50% 100%;
+}
+
+/* Particle Lab preview canvas */
+
+.jp-neptuneatelier-ParticleLabPreview {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  border: 1px solid var(--jp-border-color1);
+  border-radius: var(--jp-neptuneatelier-radius, 4px);
+  background: var(--jp-layout-color0);
+}
+
+/* Presets */
+
+.jp-neptuneatelier-PresetList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jp-neptuneatelier-PresetItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jp-neptuneatelier-PresetInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.jp-neptuneatelier-PresetName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.jp-neptuneatelier-PresetActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.jp-neptuneatelier-StarterGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.jp-neptuneatelier-StarterCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--jp-ui-font-color1);
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--jp-ui-font-size1);
+}
+
+.jp-neptuneatelier-StarterCard:hover {
+  border-color: var(--jp-brand-color1);
+}
+
+.jp-neptuneatelier-Thumb {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100px;
+  height: 62px;
+  overflow: hidden;
+  border: 1px solid var(--jp-border-color2);
+  border-radius: 4px;
+}
+
+.jp-neptuneatelier-StarterCard .jp-neptuneatelier-Thumb {
+  width: 100%;
+}
+
+.jp-neptuneatelier-ThumbBar {
+  flex: 0 0 8px;
+}
+
+.jp-neptuneatelier-ThumbBody {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.jp-neptuneatelier-ThumbSide {
+  flex: 0 0 22%;
+}
+
+.jp-neptuneatelier-ThumbContent {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+}
+
+.jp-neptuneatelier-ThumbLine {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Event effects (FxOverlay)                                           */
+
+/* ------------------------------------------------------------------ */
+
+.jp-neptuneatelier-FxCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.jp-neptuneatelier-CursorTrailCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 8999;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.jp-neptuneatelier-FxFlash {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  animation: jp-neptuneatelier-fx-flash 380ms ease-out;
+}
+
+@keyframes jp-neptuneatelier-fx-flash {
+  15% {
+    opacity: var(--jp-neptuneatelier-fx-strength, 0.35);
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.jp-neptuneatelier-fx-shake {
+  animation: jp-neptuneatelier-fx-shake 420ms
+    cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes jp-neptuneatelier-fx-shake {
+  10%,
+  90% {
+    transform: translateX(-2px);
+  }
+
+  20%,
+  80% {
+    transform: translateX(4px);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translateX(-7px);
+  }
+
+  40%,
+  60% {
+    transform: translateX(7px);
+  }
+}
+
+.jp-neptuneatelier-fx-glow {
+  animation: jp-neptuneatelier-fx-glow 900ms ease-out;
+}
+
+@keyframes jp-neptuneatelier-fx-glow {
+  30% {
+    box-shadow:
+      0 0 0 2px var(--jp-neptuneatelier-fx-color, #fff),
+      0 0 24px 6px var(--jp-neptuneatelier-fx-color, #fff);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.jp-neptuneatelier-FxTypewriter {
+  position: fixed;
+  z-index: 9000;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: var(--jp-code-font-family, monospace);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-shadow: 0 0 12px currentcolor;
+  white-space: pre;
+}
+
+.jp-neptuneatelier-FxTypewriterCursor {
+  animation: jp-neptuneatelier-fx-typewriter-blink 900ms step-end infinite;
+}
+
+@keyframes jp-neptuneatelier-fx-typewriter-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-neptuneatelier-FxTypewriterCursor {
+    animation: none;
+  }
+}
+
+/* Layer and rule cards (Effects / Events tabs) */
+
+.jp-neptuneatelier-SectionTitle .jp-neptuneatelier-Checkbox {
+  margin: 0 6px 0 0;
+  vertical-align: middle;
+}
+
+.jp-neptuneatelier-LayerName {
+  margin-right: 6px;
+}
+
+.jp-neptuneatelier-LayerTarget {
+  margin-left: 6px;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+  font-weight: normal;
+}

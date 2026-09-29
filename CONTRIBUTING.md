@@ -12,7 +12,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the myextension directory
+# Change directory to the neptuneatelier directory
 
 # Set up a virtual environment and install package in development mode
 python -m venv .venv
@@ -48,12 +48,12 @@ jupyter lab build --minimize=False
 ## Development uninstall
 
 ```bash
-pip uninstall myextension
+pip uninstall neptuneatelier
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter-builder develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `myextension` within that folder.
+folder is located. Then you can remove the symlink named `neptuneatelier` within that folder.
 
 ## Testing the extension
 
